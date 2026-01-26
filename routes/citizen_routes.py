@@ -27,7 +27,7 @@ def save_picture(form_picture):
                     'ACL': 'public-read'
                 }
             )
-            return f"https://{s3_bucket}.s3.{current_app.config.get('AWS_REGION', 'ap-south-1')}.amazonaws.com/{picture_fn}"
+            return f"https://{s3_bucket}.s3.{current_app.config.get('AWS_REGION', 'ap-south-1')}.amazonaws.com/{picture_fn}", picture_fn
         except Exception as e:
             print(f"S3 Upload failed: {e}")
             # Fallback to local if S3 fails
@@ -40,7 +40,34 @@ def save_picture(form_picture):
         
     picture_path = os.path.join(upload_path, picture_fn)
     form_picture.save(picture_path)
-    return picture_fn
+    return picture_fn, picture_fn
+
+def analyze_image(bucket, key):
+    try:
+        import boto3
+        rekognition = boto3.client('rekognition', region_name=current_app.config.get('AWS_REGION', 'ap-south-1'))
+        response = rekognition.detect_labels(
+            Image={'S3Object': {'Bucket': bucket, 'Name': key}},
+            MaxLabels=10,
+            MinConfidence=75
+        )
+        
+        labels = [label['Name'].lower() for label in response['Labels']]
+        print(f"AI Labels detected: {labels}")
+        
+        # Define high-risk/dangerous keywords for AI detection
+        critical_labels = ['flood', 'fire', 'accident', 'crash', 'natural disaster', 'collapsed building', 'emergency']
+        high_labels = ['pothole', 'broken', 'damage', 'pipeline', 'waste', 'pollution']
+        
+        if any(label in labels for label in critical_labels):
+            return 'Critical'
+        if any(label in labels for label in high_labels):
+            return 'High'
+            
+        return None # No specific AI-detected priority
+    except Exception as e:
+        print(f"AI Awareness Failed: {e}")
+        return None
 
 @citizen_bp.route('/report', methods=['GET', 'POST'])
 @login_required
@@ -66,10 +93,18 @@ def report_issue():
             return redirect(url_for('citizen.report_issue'))
             
         image_file = None
+        image_key = None
         if image and image.filename != '':
-             image_file = save_picture(image)
+             image_file, image_key = save_picture(image)
              
         priority = Issue.calculate_priority(description)
+        
+        # AI Boost: If priority isn't Critical, let the AI check the image
+        if priority != 'Critical' and image_key and current_app.config.get('S3_BUCKET'):
+            ai_priority = analyze_image(current_app.config['S3_BUCKET'], image_key)
+            if ai_priority:
+                print(f"AI detected priority: {ai_priority} (Original: {priority})")
+                priority = ai_priority
         issue = Issue(
             title=title, 
             description=description, 
