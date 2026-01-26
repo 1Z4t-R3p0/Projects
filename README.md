@@ -1,128 +1,69 @@
-# Smart Citizen Issue Reporter 🏙️
+# Smart Citizen Issue Reporter 🚦
 
-A cloud-based web application that connects citizens with authorities to solve public issues efficiently. This is a Final Year Project demonstrating Full Stack Development and Cloud Computing concepts.
+A modern, cloud-native web application that empowers citizens to report civic issues (like potholes, broken streetlights, or garbage) directly to city administrators. Built with Python/Flask and deployed on AWS for scalability and reliability.
+
+![Architecture Diagram](https://github.com/1Z4t-R3p0/Projects/raw/main/docs/assets/architecture.png)
 
 ## 🌟 Features
 
-### For Citizens:
-- **User Registration & Login**: Secure account creation.
-- **Report Issues**: Upload photos, location, and description of issues (Garbage, Potholes, etc.).
-- **Track Status**: View the status of reported issues (Pending, In Progress, Resolved).
+-   **User-Friendly Reporting**: Citizens can easily upload photos and report issues with location details.
+-   **Admin Dashboard**: A centralized dashboard for city officials to view, manage, and update the status of reported issues.
+-   **Critical Alerts**: Automatically detects high-priority issues (e.g., "emergency", "danger") and sends **instant SNS notifications** (SMS/Email) to administrators.
+-   **Cloud Storage**: Securely stores issue images in **AWS S3**.
+-   **Reliable Database**: Uses **AWS RDS (PostgreSQL)** for robust data management.
+-   **Live Deployment**: Fully containerized with Docker and hosted on **AWS EC2**.
 
-### For Authorities (Admin):
-- **Admin Dashboard**: Overview of total reports and statistics.
-- **Manage Issues**: View all incoming reports and update their status.
-- **Delete Reports**: Remove duplicate or fake reports.
+## 🏗️ Architecture
 
-## 🛠️ Technology Stack
+The application follows a standard N-tier architecture deployed on AWS:
 
-- **Backend**: Python (Flask), Flask-SQLAlchemy, Flask-Login
-- **Frontend**: HTML5, CSS3, JavaScript (Jinja2 Templates)
-- **Database**: SQLite (Local) / Cloud SQL (Production)
-- **Cloud Platform**: Google Cloud Platform (Cloud Run, Cloud Storage)
+1.  **Frontend/Backend**: Flask application running in a Docker container on an **EC2** instance.
+2.  **Database**: Managed **PostgreSQL** database on **Amazon RDS**.
+3.  **Storage**: Uploaded images are stored directly in an **S3 Bucket**.
+4.  **Notifications**: **Amazon SNS** is triggered for critical issue alerts.
+5.  **Processing**: **AWS Lambda** (ready for integration) can establish triggers on S3 uploads for image optimization.
 
-## 🚀 How to Run Locally
+## 🚀 Getting Started
 
-1. **Clone the repository/Open project folder**:
-   ```bash
-   cd SmartCitizenReporter
-   ```
+### Prerequisites
+-   Docker & Docker Compose
+-   AWS Account (for cloud deployment)
 
-2. **Create a virtual environment**:
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+### Local Setup
+1.  Clone the repository:
+    ```bash
+    git clone https://github.com/1Z4t-R3p0/Projects.git SmartCitizenReporter
+    cd SmartCitizenReporter
+    ```
+2.  Run with Docker Compose:
+    ```bash
+    docker-compose up --build
+    ```
+3.  Access the app at `http://localhost:5000`.
 
-3. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
+### AWS Deployment (Manual)
+Please refer to the detailed [AWS Manual Setup Guide](docs/MANUAL_SETUP.md) for step-by-step instructions on creating the VPC, EC2, RDS, and S3 resources manually within the Free Tier.
 
-4. **Run the application**:
-   ```bash
-   python app.py
-   ```
+## 🔑 Login Credentials
 
-5. **Access the App**:
-   Open http://127.0.0.1:5000 in your browser.
+**Admin Portal**:
+-   **Username**: `admin`
+-   **Password**: `admin123`
 
-## ☁️ Cloud Deployment (Google Cloud)
+**Citizen Portal (Test)**:
+-   **Username**: `john_doe` or `jane_smith`
+-   **Password**: `password`
 
-This project is ready to be deployed on Google Cloud Run.
+## 🛠️ Tech Stack
 
-1. **Build the Container Image**:
-   ```bash
-   gcloud builds submit --tag gcr.io/PROJECT-ID/smart-citizen-reporter
-   ```
+-   **Backend**: Python, Flask, SQLAlchemy
+-   **Database**: PostgreSQL / SQLite (local)
+-   **Cloud**: AWS (EC2, S3, RDS, SNS, Lambda)
+-   **DevOps**: Docker, Terraform (optional), Git
 
-2. **Deploy to Cloud Run**:
-   ```bash
-   gcloud run deploy smart-citizen-reporter --image gcr.io/PROJECT-ID/smart-citizen-reporter --platform managed --region us-central1 --allow-unauthenticated
-   ```
+## 🚨 Critical Issue Trigger
 
-## 🏗️ AWS Cloud Architecture (Alternative)
-
-If deploying to Amazon Web Services (AWS), the architecture utilizes the following services for scalability and reliability:
-
-### Architecture Diagram Text Description:
-
-**[User/Citizen]**  
-   ⬇️ *(HTTPS Request)*  
-**[Route 53]** *(DNS Management)*  
-   ⬇️  
-**[AWS Elastic Beanstalk]** *(Application PaaS)*  
-   ┣━━ **[EC2 Instances]** *(Auto-scaling Group)*: Runs the Flask Application  
-   ┃      ┗━━ **Docker Container**: Hosts the web server (Gunicorn)  
-   ┣━━ **[Application Load Balancer]**: Distributes traffic  
-   ⬇️  
-**[Backend Services]**  
-   ┣━━ **[Amazon RDS]** *(PostgreSQL)*: Stores User data, Issues, and Metadata.  
-   ┗━━ **[Amazon S3]** *(Simple Storage Service)*: Stores uploaded issue images safely and reliably.
-
-### Why this Architecture?
-1.  **Elastic Beanstalk**: Manages the deployment details (capacity provisioning, load balancing, auto-scaling) so we can focus on code.
-2.  **RDS**: Managed relational database service that creates backups and patches automatically.
-3.  **S3**: Highly durable storage for images, cheaper and more reliable than storing on the web server disk.
-
-## 🔮 Future Enhancements
-
-To further scale this project, the following advanced features can be implemented:
-
-1.  **AI-Based Automatic Categorization**:
-    -   Use **TensorFlow/Keras** or **Google Vision API** to analyze uploaded images and automatically detect if it's a pothole, garbage, etc.
-    -   Prevents users from selecting the wrong category.
-
-2.  **GIS Integration (Google Maps API)**:
-    -   Replace the text-based location with an interactive map.
-    -   Allow users to "Pin" their location to get exact GPS coordinates.
-    -   Show a heat map of issues for authorities.
-
-3.  **Automated Duplicate Detection**:
-    -   Use image hashing (perceptual hash) to check if the same photo has already been uploaded.
-    -   Check if an issue exists within a 10-meter radius of a new report.
-
-4.  **Real-time Notifications**:
-    -   Integrate **Twilio** (SMS) or **SendGrid** (Email) to notify citizens when their issue status changes from "Pending" to "Resolved".
-
-## 📂 Project Structure
-
-- `app.py`: Main application entry point.
-- `models.py`: Database classes (User, Issue).
-- `routes/`: Contains logic for Auth, Citizen, and Admin modules.
-- `templates/`: HTML files for valid pages.
-- `static/`: CSS styles and uploaded images.
-
-## 🎓 Final Year Viva Explanations
-
-**Q: Why Flask?**
-A: Flask is lightweight, easy to learn, and perfect for prototyping RESTful web applications.
-
-**Q: How is it secure?**
-A: Passwords are hashed using `werkzeug.security`. We use Session-based authentication via `Flask-Login` and secure file handling for uploads.
-
-**Q: What is the Cloud component?**
-A: The application is containerized using Docker and runs on Google Cloud Run (Serverless). It is scalable and cost-effective.
+The system automatically scans the description of reported issues. If keywords like **"emergency"**, **"danger"**, **"accident"**, or **"fatal"** are detected, the priority is set to **Critical**, and an **AWS SNS** alert is immediately dispatched to the admin team.
 
 ---
-**Developed by [Your Name]**
+*Created by [1Z4t](https://github.com/1Z4t-R3p0)*
