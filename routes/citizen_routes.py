@@ -58,22 +58,30 @@ def analyze_image(bucket, key):
     try:
         import boto3
         rekognition = boto3.client('rekognition', region_name=current_app.config.get('AWS_REGION', 'ap-south-1'))
+        
+        print(f"DEBUG: Analyzing image S3://{bucket}/{key}")
+        
         response = rekognition.detect_labels(
             Image={'S3Object': {'Bucket': bucket, 'Name': key}},
-            MaxLabels=10,
-            MinConfidence=75
+            MaxLabels=20,
+            MinConfidence=55
         )
         
         labels = [label['Name'].lower() for label in response['Labels']]
-        print(f"AI Labels detected: {labels}")
+        print(f"AI Labels detected (all): {labels}")
         
         # Define high-risk/dangerous keywords for AI detection
-        critical_labels = ['flood', 'fire', 'accident', 'crash', 'natural disaster', 'collapsed building', 'emergency']
-        high_labels = ['pothole', 'broken', 'damage', 'pipeline', 'waste', 'pollution']
+        critical_labels = ['flood', 'fire', 'flame', 'accident', 'crash', 'natural disaster', 'collapsed building', 'emergency', 'smoke']
+        high_labels = ['pothole', 'broken', 'damage', 'pipeline', 'waste', 'pollution', 'hazard']
         
-        if any(label in labels for label in critical_labels):
+        found_critical = [l for l in labels if l in critical_labels]
+        found_high = [l for l in labels if l in high_labels]
+        
+        print(f"DEBUG: found_critical={found_critical}, found_high={found_high}")
+        
+        if found_critical:
             return 'Critical'
-        if any(label in labels for label in high_labels):
+        if found_high:
             return 'High'
             
         return None # No specific AI-detected priority
