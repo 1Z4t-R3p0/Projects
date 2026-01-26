@@ -1,0 +1,33 @@
+random_id.bucket_suffix: Refreshing state... [id=nQcJmA]
+data.archive_file.lambda_zip: Reading...
+data.archive_file.lambda_zip: Read complete after 0s [id=b384864152ffa6746a0d5b7474eeec33b7a5d5a3]
+aws_iam_role.lambda_role: Refreshing state... [id=smart-citizen-lambda-role]
+aws_vpc.main: Refreshing state... [id=vpc-0a2e42ac3c3891cf5]
+aws_key_pair.main: Refreshing state... [id=smart-citizen-key]
+aws_iam_role.ec2_role: Refreshing state... [id=smart-citizen-ec2-role]
+aws_sns_topic.alerts: Refreshing state... [id=arn:aws:sns:ap-south-1:502713365215:smart-citizen-alerts]
+aws_s3_bucket.uploads: Refreshing state... [id=smart-citizen-uploads-9d070998]
+aws_internet_gateway.main: Refreshing state... [id=igw-001f1512482035e1f]
+aws_subnet.public_2: Refreshing state... [id=subnet-051e4e669106974b0]
+aws_subnet.public_1: Refreshing state... [id=subnet-06561ad0d8d7dedcf]
+aws_security_group.ec2: Refreshing state... [id=sg-0091c8ee87e2f0cd7]
+aws_route_table.public: Refreshing state... [id=rtb-08df53e18c9c897a0]
+aws_s3_bucket_policy.public_read_policy: Refreshing state... [id=smart-citizen-uploads-9d070998]
+aws_s3_bucket_public_access_block.uploads: Refreshing state... [id=smart-citizen-uploads-9d070998]
+aws_s3_bucket_ownership_controls.uploads: Refreshing state... [id=smart-citizen-uploads-9d070998]
+aws_db_subnet_group.main: Refreshing state... [id=smart-citizen-db-subnet-group]
+aws_security_group.rds: Refreshing state... [id=sg-0f052190a2a941875]
+aws_route_table_association.public_2: Refreshing state... [id=rtbassoc-00542eb45cecbe4f8]
+aws_route_table_association.public_1: Refreshing state... [id=rtbassoc-0e7c3574a0719c344]
+aws_s3_bucket_acl.uploads: Refreshing state... [id=smart-citizen-uploads-9d070998,public-read]
+aws_db_instance.main: Refreshing state... [id=db-3LRQTZSALK326EPVC72U6FQT5A]
+aws_iam_role_policy_attachment.lambda_basic: Refreshing state... [id=smart-citizen-lambda-role-20260126081252838100000001]
+aws_lambda_function.image_processor: Refreshing state... [id=smart-citizen-image-processor]
+aws_iam_role_policy.ec2_policy: Refreshing state... [id=smart-citizen-ec2-role:smart-citizen-ec2-policy]
+aws_iam_instance_profile.ec2_profile: Refreshing state... [id=smart-citizen-ec2-profile]
+aws_instance.main: Refreshing state... [id=i-03e1b6e1ac04293b3]
+
+No changes. Your infrastructure matches the configuration.
+
+Terraform has compared your real infrastructure against your configuration
+and found no differences, so no changes are needed.

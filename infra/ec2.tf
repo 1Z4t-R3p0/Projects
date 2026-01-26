@@ -94,6 +94,13 @@ resource "aws_iam_role_policy" "ec2_policy" {
           "sns:Publish"
         ]
         Resource = aws_sns_topic.alerts.arn
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "rekognition:DetectLabels"
+        ]
+        Resource = "*"
       }
     ]
   })
