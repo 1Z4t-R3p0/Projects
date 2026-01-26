@@ -10,6 +10,20 @@ resource "aws_s3_bucket" "uploads" {
   }
 }
 
+resource "aws_s3_bucket_ownership_controls" "uploads" {
+  bucket = aws_s3_bucket.uploads.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
+resource "aws_s3_bucket_acl" "uploads" {
+  depends_on = [aws_s3_bucket_ownership_controls.uploads, aws_s3_bucket_public_access_block.uploads]
+
+  bucket = aws_s3_bucket.uploads.id
+  acl    = "public-read"
+}
+
 resource "aws_s3_bucket_public_access_block" "uploads" {
   bucket = aws_s3_bucket.uploads.id
 

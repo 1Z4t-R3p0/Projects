@@ -47,13 +47,19 @@ def report_issue():
          return redirect(url_for('admin.dashboard'))
 
     if request.method == 'POST':
-        title = request.form.get('title')
-        description = request.form.get('description')
+        title_select = request.form.get('title_select')
+        manual_title = request.form.get('manual_title')
         location = request.form.get('location')
+        latitude = request.form.get('latitude')
+        longitude = request.form.get('longitude')
+        maps_link = request.form.get('maps_link')
+        description = request.form.get('description')
         image = request.files.get('image')
         
-        if not title or not description or not location:
-            flash('All fields are required', 'error')
+        title = manual_title if title_select == 'Other' else title_select
+        
+        if not title or not location or not description:
+            flash('Title, Location, and Description are required', 'error')
             return redirect(url_for('citizen.report_issue'))
             
         image_file = None
@@ -61,7 +67,17 @@ def report_issue():
              image_file = save_picture(image)
              
         priority = Issue.calculate_priority(description)
-        issue = Issue(title=title, description=description, location=location, image_file=image_file, priority=priority, author=current_user)
+        issue = Issue(
+            title=title, 
+            description=description, 
+            location=location, 
+            latitude=latitude,
+            longitude=longitude,
+            maps_link=maps_link,
+            image_file=image_file, 
+            priority=priority, 
+            author=current_user
+        )
         db.session.add(issue)
         db.session.commit()
         

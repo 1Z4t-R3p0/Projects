@@ -65,8 +65,17 @@
             </td>
             <td style="padding: 12px;">
                 {{ issue.location }}<br>
-                <a href="https://earth.google.com/web/search/{{ issue.location | urlencode }}" target="_blank"
-                    style="font-size: 0.8rem; color: #3498db; text-decoration: none;">🌍 View on Earth</a>
+                {% if issue.latitude and issue.longitude %}
+                <small style="color: #666;">Lat: {{ issue.latitude }}, Long: {{ issue.longitude }}</small><br>
+                {% endif %}
+                <div style="margin-top: 5px;">
+                    <a href="https://earth.google.com/web/search/{{ issue.location | urlencode }}" target="_blank"
+                        style="font-size: 0.8rem; color: #3498db; text-decoration: none;">🌍 View on Earth</a>
+                    {% if issue.maps_link %}
+                    | <a href="{{ issue.maps_link }}" target="_blank"
+                        style="font-size: 0.8rem; color: #2ecc71; text-decoration: none;">📍 Google Maps</a>
+                    {% endif %}
+                </div>
             </td>
             <td style="padding: 12px;">
                 <span class="status-badge status-{{ issue.status | replace(' ', '') }}">{{ issue.status }}</span>

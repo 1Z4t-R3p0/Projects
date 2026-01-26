@@ -60,10 +60,23 @@
                     <h4 style="color: #34495e; margin-bottom: 0.5rem;"><i class="fas fa-map-marker-alt"></i> Location
                     </h4>
                     <p style="color: #2c3e50; font-size: 1.1rem; margin-bottom: 0.5rem;">{{ issue.location }}</p>
-                    <a href="https://earth.google.com/web/search/{{ issue.location | urlencode }}" target="_blank"
-                        class="btn btn-sm btn-outline-info" style="border-radius: 20px;">
-                        <i class="fas fa-globe"></i> View on Google Earth
-                    </a>
+                    {% if issue.latitude and issue.longitude %}
+                    <p style="color: #7f8c8d; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                        <i class="fas fa-crosshairs"></i> Lat: {{ issue.latitude }}, Long: {{ issue.longitude }}
+                    </p>
+                    {% endif %}
+                    <div style="display: flex; gap: 10px;">
+                        <a href="https://earth.google.com/web/search/{{ issue.location | urlencode }}" target="_blank"
+                            class="btn btn-sm btn-outline-info" style="border-radius: 20px;">
+                            <i class="fas fa-globe"></i> View on Google Earth
+                        </a>
+                        {% if issue.maps_link %}
+                        <a href="{{ issue.maps_link }}" target="_blank" class="btn btn-sm btn-outline-success"
+                            style="border-radius: 20px;">
+                            <i class="fas fa-map-marked-alt"></i> View on Google Maps
+                        </a>
+                        {% endif %}
+                    </div>
                 </div>
 
                 <hr style="border: 0; border-top: 1px solid #eee; margin: 2rem 0;">
