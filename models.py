@@ -31,13 +31,16 @@ class Issue(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     @staticmethod
-    def calculate_priority(description):
-        description = description.lower()
-        if any(word in description for word in ['emergency', 'danger', 'immediate', 'fatal', 'accident']):
+    def calculate_priority(title, description):
+        text = (str(title) + " " + str(description)).lower()
+        # Critical priority keywords
+        if any(word in text for word in ['emergency', 'danger', 'immediate', 'fatal', 'accident', 'fire', 'flood', 'critical', 'blast', 'explosion']):
             return 'Critical'
-        if any(word in description for word in ['repair', 'broken', 'damage', 'leaking', 'urgent']):
+        # High priority keywords
+        if any(word in text for word in ['repair', 'broken', 'damage', 'leaking', 'urgent', 'pothole', 'sewage', 'collapsed']):
             return 'High'
-        if any(word in description for word in ['garbage', 'trash', 'light', 'noise']):
+        # Medium priority keywords
+        if any(word in text for word in ['garbage', 'trash', 'light', 'noise', 'parking', 'animal']):
             return 'Medium'
         return 'Low'
 

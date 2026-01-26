@@ -59,7 +59,7 @@ def analyze_image(bucket, key):
         import boto3
         rekognition = boto3.client('rekognition', region_name=current_app.config.get('AWS_REGION', 'ap-south-1'))
         
-        print(f"DEBUG: Analyzing image S3://{bucket}/{key}")
+        current_app.logger.info(f"AI Analyzing S3://{bucket}/{key}")
         
         response = rekognition.detect_labels(
             Image={'S3Object': {'Bucket': bucket, 'Name': key}},
@@ -68,20 +68,20 @@ def analyze_image(bucket, key):
         )
         
         labels = [label['Name'].lower() for label in response['Labels']]
-        print(f"AI Labels detected (all): {labels}")
+        current_app.logger.info(f"AI detected labels: {labels}")
         
         # Define high-risk/dangerous keywords for AI detection
-        critical_labels = ['flood', 'fire', 'flame', 'accident', 'crash', 'natural disaster', 'collapsed building', 'emergency', 'smoke']
-        high_labels = ['pothole', 'broken', 'damage', 'pipeline', 'waste', 'pollution', 'hazard']
+        critical_labels = ['flood', 'fire', 'flame', 'blaze', 'accident', 'crash', 'collision', 'natural disaster', 'collapsed building', 'emergency', 'smoke']
+        high_labels = ['pothole', 'broken', 'damage', 'pipeline', 'waste', 'pollution', 'hazard', 'sewage']
         
         found_critical = [l for l in labels if l in critical_labels]
         found_high = [l for l in labels if l in high_labels]
         
-        print(f"DEBUG: found_critical={found_critical}, found_high={found_high}")
-        
         if found_critical:
+            current_app.logger.info(f"AI Critical Match: {found_critical}")
             return 'Critical'
         if found_high:
+            current_app.logger.info(f"AI High Match: {found_high}")
             return 'High'
             
         return None # No specific AI-detected priority
@@ -117,13 +117,14 @@ def report_issue():
         if image and image.filename != '':
              image_file, image_key = save_picture(image)
              
-        priority = Issue.calculate_priority(description)
+        priority = Issue.calculate_priority(title, description)
         
         # AI Boost: If priority isn't Critical, let the AI check the image
         if priority != 'Critical' and image_key and current_app.config.get('S3_BUCKET'):
+            current_app.logger.info(f"AI Analyzing image: {image_key}")
             ai_priority = analyze_image(current_app.config['S3_BUCKET'], image_key)
             if ai_priority:
-                print(f"AI detected priority: {ai_priority} (Original: {priority})")
+                current_app.logger.info(f"AI detected priority: {ai_priority} (Handled: {priority})")
                 priority = ai_priority
         issue = Issue(
             title=title, 
