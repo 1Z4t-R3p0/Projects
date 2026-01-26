@@ -22,7 +22,10 @@ def save_picture(form_picture):
                 form_picture,
                 s3_bucket,
                 picture_fn,
-                ExtraArgs={'ContentType': form_picture.content_type}
+                ExtraArgs={
+                    'ContentType': form_picture.content_type,
+                    'ACL': 'public-read'
+                }
             )
             return f"https://{s3_bucket}.s3.{current_app.config.get('AWS_REGION', 'ap-south-1')}.amazonaws.com/{picture_fn}"
         except Exception as e:
