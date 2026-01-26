@@ -15,7 +15,7 @@ class Config:
     MAIL_USE_TLS = True
     MAIL_USERNAME = os.environ.get('EMAIL_USER')
     MAIL_PASSWORD = os.environ.get('EMAIL_PASS')
-    ADMIN_EMAIL = 'a.anistomejin@gmail.com'
+    ADMIN_EMAIL = 'adhulya2531@gmail.com'
     SNS_TOPIC_ARN = os.environ.get('SNS_TOPIC_ARN')
     S3_BUCKET = os.environ.get('S3_BUCKET')
     AWS_REGION = os.environ.get('AWS_REGION', 'ap-south-1')
