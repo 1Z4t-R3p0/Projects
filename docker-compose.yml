@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16
+    container_name: smart-citizen-db
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: citizenreporter
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    container_name: smart-citizen-web
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=postgresql://user:password@db:5432/citizenreporter
+      - SECRET_KEY=your_secret_key_here
+      - FLASK_APP=app.py
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:

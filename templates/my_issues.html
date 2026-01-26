@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>My Reported Issues</h2>
+{% if issues %}
+{% for issue in issues %}
+<div class="issue-card">
+    {% if issue.image_file and issue.image_file != 'default.jpg' %}
+    {% if issue.image_file.startswith('http') %}
+    <img src="{{ issue.image_file }}" alt="Issue Image" class="issue-img">
+    {% else %}
+    <img src="{{ url_for('static', filename='uploads/' + issue.image_file) }}" alt="Issue Image" class="issue-img">
+    {% endif %}
+    {% else %}
+    <img src="{{ url_for('static', filename='uploads/default.jpg') }}" alt="Default" class="issue-img">
+    {% endif %}
+    <div class="issue-details">
+        <h3>{{ issue.title }}</h3>
+        <p><strong>Status:</strong> <span class="status-badge status-{{ issue.status | replace(' ', '') }}">{{
+                issue.status }}</span></p>
+        <p><strong>Location:</strong> {{ issue.location }}</p>
+        <p><strong>Description:</strong> {{ issue.description }}</p>
+        <small>Reported on {{ issue.date_posted.strftime('%Y-%m-%d') }}</small>
+    </div>
+</div>
+{% endfor %}
+{% else %}
+<p>You haven't reported any issues yet. <a href="{{ url_for('citizen.report_issue') }}">Report one now</a>.</p>
+{% endif %}
+{% endblock %}

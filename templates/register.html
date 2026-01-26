@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="form-container">
+    <h2>Register</h2>
+    <form method="POST">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" name="username" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" name="password" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="role">Register as:</label>
+            <select name="role" class="form-control">
+                <option value="citizen">Citizen</option>
+                <option value="admin">Authority (Admin)</option>
+            </select>
+        </div>
+        <button type="submit" class="btn">Register</button>
+    </form>
+    <p style="margin-top: 10px;">Already have an account? <a href="{{ url_for('auth.login') }}">Login</a></p>
+</div>
+{% endblock %}

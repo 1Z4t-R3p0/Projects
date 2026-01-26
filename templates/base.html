@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Citizen Issue Reporter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">Smart Citizen 🏙️</div>
+            <ul class="nav-links">
+                {% if current_user.is_authenticated %}
+                {% if current_user.role == 'admin' %}
+                <li><a href="{{ url_for('admin.dashboard') }}">Admin Dashboard</a></li>
+                {% else %}
+                <li><a href="{{ url_for('citizen.report_issue') }}">Report Issue</a></li>
+                <li><a href="{{ url_for('citizen.my_issues') }}">My Issues</a></li>
+                {% endif %}
+                <li><a href="{{ url_for('auth.logout') }}" class="btn-logout">Logout</a></li>
+                {% else %}
+                <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+                <li><a href="{{ url_for('auth.register') }}" class="btn-register">Register</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Smart Citizen Issue Reporter. Final Year Project.</p>
+    </footer>
+</body>
+
+</html>
