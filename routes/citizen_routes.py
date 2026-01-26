@@ -18,6 +18,10 @@ def save_picture(form_picture):
         try:
             import boto3
             s3 = boto3.client('s3', region_name=current_app.config.get('AWS_REGION', 'ap-south-1'))
+            
+            # Ensure we are at the start of the file
+            form_picture.seek(0)
+            
             s3.upload_fileobj(
                 form_picture,
                 s3_bucket,
@@ -30,7 +34,8 @@ def save_picture(form_picture):
             return f"https://{s3_bucket}.s3.{current_app.config.get('AWS_REGION', 'ap-south-1')}.amazonaws.com/{picture_fn}", picture_fn
         except Exception as e:
             print(f"S3 Upload failed: {e}")
-            # Fallback to local if S3 fails
+            # Reset file pointer for local fallback
+            form_picture.seek(0)
             pass
 
     # Local Fallback
@@ -39,6 +44,9 @@ def save_picture(form_picture):
         os.makedirs(upload_path)
         
     picture_path = os.path.join(upload_path, picture_fn)
+    
+    # Ensure file is open and at start before saving locally
+    form_picture.seek(0)
     form_picture.save(picture_path)
     return picture_fn, picture_fn
 
