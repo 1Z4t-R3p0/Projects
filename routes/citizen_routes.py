@@ -8,22 +8,27 @@ from werkzeug.utils import secure_filename
 
 citizen_bp = Blueprint('citizen', __name__)
 
+import io
+
 def save_picture(form_picture):
     random_hex = secrets.token_hex(8)
     _, f_ext = os.path.splitext(form_picture.filename)
     picture_fn = random_hex + f_ext
     
+    # Read file into memory to avoid "closed file" issues
+    file_data = form_picture.read()
+    if not file_data:
+        return None, None
+        
     s3_bucket = current_app.config.get('S3_BUCKET')
     if s3_bucket:
         try:
             import boto3
             s3 = boto3.client('s3', region_name=current_app.config.get('AWS_REGION', 'ap-south-1'))
             
-            # Ensure we are at the start of the file
-            form_picture.seek(0)
-            
+            # Use BytesIO for S3 upload
             s3.upload_fileobj(
-                form_picture,
+                io.BytesIO(file_data),
                 s3_bucket,
                 picture_fn,
                 ExtraArgs={
@@ -34,8 +39,6 @@ def save_picture(form_picture):
             return f"https://{s3_bucket}.s3.{current_app.config.get('AWS_REGION', 'ap-south-1')}.amazonaws.com/{picture_fn}", picture_fn
         except Exception as e:
             print(f"S3 Upload failed: {e}")
-            # Reset file pointer for local fallback
-            form_picture.seek(0)
             pass
 
     # Local Fallback
@@ -45,9 +48,10 @@ def save_picture(form_picture):
         
     picture_path = os.path.join(upload_path, picture_fn)
     
-    # Ensure file is open and at start before saving locally
-    form_picture.seek(0)
-    form_picture.save(picture_path)
+    # Save from memory buffer
+    with open(picture_path, 'wb') as f:
+        f.write(file_data)
+        
     return picture_fn, picture_fn
 
 def analyze_image(bucket, key):

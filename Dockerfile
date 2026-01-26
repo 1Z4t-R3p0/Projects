@@ -27,4 +27,4 @@ ENV FLASK_APP=app.py
 ENV FLASK_RUN_HOST=0.0.0.0
 
 # Start application
-CMD ["sh", "-c", "python pre_start.py && gunicorn --bind 0.0.0.0:5000 --workers 2 --threads 4 --timeout 120 --access-logfile - --error-logfile - app:app"]
+CMD ["sh", "-c", "python pre_start.py && gunicorn --bind 0.0.0.0:5000 --workers 2 --threads 4 --timeout 300 --access-logfile - --error-logfile - app:app"]
