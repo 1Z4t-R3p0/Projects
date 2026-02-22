@@ -25,11 +25,23 @@ The application follows a standard N-tier architecture deployed on AWS:
 
 ## 🚀 Getting Started
 
-### Prerequisites
--   Docker & Docker Compose
--   AWS Account (for cloud deployment)
+### 🛠️ Automated Deployment (Recommended)
 
-### Local Setup
+Deploy the Smart Citizen Reporter seamlessly on Windows or Linux. These scripts will automatically install **Docker**, clone the repository, and start the system via `docker-compose`.
+
+#### 🪟 Windows (PowerShell)
+Run this command from an elevated PowerShell command prompt:
+```powershell
+irm https://raw.githubusercontent.com/1Z4t-R3p0/Projects/main/win-setup.ps1 | iex
+```
+
+#### 🐧 WSL / Linux
+Run this command from your terminal:
+```bash
+curl -fsSL https://raw.githubusercontent.com/1Z4t-R3p0/Projects/main/wsl-setup.sh | bash
+```
+
+### Manual Local Setup (Docker)
 1.  Clone the repository:
     ```bash
     git clone https://github.com/1Z4t-R3p0/Projects.git SmartCitizenReporter
