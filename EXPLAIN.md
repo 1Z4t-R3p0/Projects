@@ -37,6 +37,24 @@ This document breaks down the exact technologies, libraries, and cloud architect
 
 The standout feature of this application is its automated triage system using Cloud AI and Pub/Sub mechanics.
 
+### 🌊 AWS Data Flowchart
+
+```mermaid
+graph TD
+    A[Citizen] -->|Report Issue & Image| B(Flask App in EC2 Container)
+    B -->|Stream Image Upload| C[(AWS S3 Bucket)]
+    B -->|Send Object Reference| D{AWS Rekognition AI}
+    D -->|Return Extracted Labels| B
+    B -->|Cross-Reference Threat Payload| E{Match Critical Labels?}
+    E -- Yes --> F[Flag Issue as Critical Priority]
+    F --> G[Trigger AWS SNS Event]
+    G -->|SMS / Email| H[Admin Inbox]
+    E -- No --> I[Standard Priority]
+    F --> J[(AWS RDS PostgreSQL)]
+    I --> J
+    K[Admin Dashboard] -->|Triage & Resolve| J
+```
+
 ### 1. Artificial Intelligence Integration
 When a citizen uploads a photo of an issue, the image is streamed directly to AWS S3.
 *   The application immediately passes the S3 object reference to **AWS Rekognition**.
